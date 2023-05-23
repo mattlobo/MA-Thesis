@@ -12,8 +12,8 @@
 # ---
 # SCRIPT: preparing the input to run the life table function
 
-  lifetable_data_THREE <- inner_join(filter(popEstimates_data_THREE_MORTALITY, YEAR == 2010),
-                                   filter(popEstimates_data_THREE_MORTALITY, YEAR == 2019),
+  lifetable_data_TWO <- inner_join(filter(popEstimates_data_TWO_MORTALITY, YEAR == 2010),
+                                   filter(popEstimates_data_TWO_MORTALITY, YEAR == 2019),
                                    join_by(AGE_GROUP, GENDER, RACE_COLOR)) %>% 
     rename("YEAR_1" = "YEAR.x",
            "POP_1" = "TOTAL.x",
@@ -24,26 +24,25 @@
            N = ifelse(LOWER > 0, N + 1, N),
            cod = paste(ifelse(GENDER == "Female", "f", "m"), "-", RACE_COLOR))
   
-  temp_data_MORTALITY_THREE <- deathEstimates_data_THREE %>% 
+  temp_data_MORTALITY_TWO <- deathEstimates_data_TWO %>% 
     group_by(AGE_GROUP, GENDER, RACE_COLOR) %>% 
     summarise(DEATHS = sum(TOTAL))
   
-  lifetable_data_THREE <- inner_join(lifetable_data_THREE,
-                                   temp_data_MORTALITY_THREE,
+  lifetable_data_TWO <- inner_join(lifetable_data_TWO,
+                                   temp_data_MORTALITY_TWO,
                                    join_by(AGE_GROUP, GENDER, RACE_COLOR)) %>% 
-    select(AGE_GROUP, LOWER, N, GENDER, RACE_COLOR, POP_1, POP_2, DEATHS, cod); rm(temp_data_MORTALITY_THREE)
+    select(AGE_GROUP, LOWER, N, GENDER, RACE_COLOR, POP_1, POP_2, DEATHS, cod); rm(temp_data_MORTALITY_TWO)
 
 # ---
 # SCRIPT: generating plot of RAW mortality rates before any adjustments
 
-  ggplot(data = lifetable_data_THREE, 
+  ggplot(data = lifetable_data_TWO, 
          mapping = aes(x = AGE_GROUP, y = log(DEATHS / (10 * sqrt(POP_1 * POP_2))), group = RACE_COLOR, color = RACE_COLOR)) +
     
     geom_line(linewidth = 0.8) +
     
     scale_color_manual(values = c("White" = "#ef476f",
-                                  "Black" = "#ffd166",
-                                  "Mixed" = "#118ab2",
+                                  "Mixed_Black" = "#118ab2",
                                   "Asian" = "#06d6a0",
                                   "Indigenous" = "#7F96FF",
                                   "Missing" = "#575761")) +
@@ -65,11 +64,11 @@
 
   adjFactors_ages <- seq(15, 60, by = 5)
   
-  adjFactors_data_THREE <- results_THREE %>% 
+  adjFactors_data_TWO <- results_TWO %>% 
     select(cod, ggbseg, delta)
   
-  lifetable_data_THREE <- lifetable_data_THREE %>%
-    inner_join(., adjFactors_data_THREE, join_by(cod)) %>%
+  lifetable_data_TWO <- lifetable_data_TWO %>%
+    inner_join(., adjFactors_data_TWO, join_by(cod)) %>%
     mutate(ggbseg = ifelse(ggbseg > 1, 1, ggbseg),
            delta = ifelse(ggbseg < 1, delta, 1),
            DEATHS = ifelse(LOWER %in% adjFactors_ages, DEATHS / ggbseg, DEATHS),
@@ -133,23 +132,16 @@
 # ---
 # SCRIPT: Storing the results for RACE_COLOR White
 
-  LT_Male_White <- LT(lifetable_data_THREE, "Male", "White")
+  LT_Male_White <- LT(lifetable_data_TWO, "Male", "White")
   
-  LT_Female_White <- LT(lifetable_data_THREE, "Female", "White")
+  LT_Female_White <- LT(lifetable_data_TWO, "Female", "White")
 
 # ---
-# Storing the results for RACE_COLOR Mixed
+# Storing the results for RACE_COLOR Mixed_Black
 
-  LT_Male_Mixed <- LT(lifetable_data_THREE, "Male", "Mixed")
+  LT_Male_Mixed_Black <- LT(lifetable_data_TWO, "Male", "Mixed_Black")
   
-  LT_Female_Mixed <- LT(lifetable_data_THREE, "Female", "Mixed")
-
-# ---
-# Storing the results for RACE_COLOR Black
-
-  LT_Male_Black <- LT(lifetable_data_THREE, "Male", "Black")
-  
-  LT_Female_Black <- LT(lifetable_data_THREE, "Female", "Black")
+  LT_Female_Mixed_Black <- LT(lifetable_data_TWO, "Female", "Mixed_Black")
 
 # ---
 # SCRIPT: generating plot of the death probability used in the life table
@@ -160,17 +152,12 @@
               mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
               linewidth = 0.8) +
     
-    geom_line(data = LT_Male_Mixed, 
-              mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
-              linewidth = 0.8) +
-    
-    geom_line(data = LT_Male_Black, 
+    geom_line(data = LT_Male_Mixed_Black, 
               mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
               linewidth = 0.8) +
     
     scale_color_manual(values = c("White" = "#ef476f",
-                                  "Black" = "#ffd166",
-                                  "Mixed" = "#118ab2",
+                                  "Mixed_Black" = "#118ab2",
                                   "Asian" = "#06d6a0",
                                   "Indigenous" = "#7F96FF",
                                   "Missing" = "#575761")) +
@@ -195,17 +182,12 @@
               mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
               linewidth = 0.8) +
     
-    geom_line(data = LT_Female_Mixed, 
-              mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
-              linewidth = 0.8) +
-    
-    geom_line(data = LT_Female_Black, 
+    geom_line(data = LT_Female_Mixed_Black, 
               mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
               linewidth = 0.8) +
     
     scale_color_manual(values = c("White" = "#ef476f",
-                                  "Black" = "#ffd166",
-                                  "Mixed" = "#118ab2",
+                                  "Mixed_Black" = "#118ab2",
                                   "Asian" = "#06d6a0",
                                   "Indigenous" = "#7F96FF",
                                   "Missing" = "#575761")) +
@@ -221,6 +203,5 @@
          subtitle = "São Paulo, Brazil",
          caption = "\n Source: Own calculations from IBGE and DATASUS")
   
-  rm(adjFactors_data_THREE, adjFactors_ages, DDM_data_THREE, results_THREE,
-     popEstimates_data_THREE_MORTALITY, deathEstimates_data_THREE)
-  
+  rm(adjFactors_data_TWO, adjFactors_ages, DDM_data_TWO, results_TWO,
+     popEstimates_data_TWO_MORTALITY, deathEstimates_data_TWO)

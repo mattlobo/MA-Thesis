@@ -8,27 +8,27 @@
 
   library(pacman)
   p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
-
+  
   setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
   source("0.1_SCRIPT - GROWTH RATES.R")
   
   setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
   source("0.2_SCRIPT - B&H MORTALITY DATA.R")
-
-# ---
-# SCRIPT: removing unnecessary data
+    
+  # ---
+  # SCRIPT: removing unnecessary data
   
   rm(distRACECOLORandAGEGROUP_processdata,
-     deathEstimates_data_ALL, deathEstimates_data_TWO)
-  
+     deathEstimates_data_ALL, deathEstimates_data_THREE)
+
 # ---
 # SCRIPT: preparing the input to run the life table function
 
-  deathEstimates_data_THREE <- deathEstimates_data_THREE %>% 
+  deathEstimates_data_TWO <- deathEstimates_data_TWO %>% 
     group_by(AGE_GROUP, GENDER, RACE_COLOR) %>% 
     summarise(MEAN = mean(TOTAL))
   
-  BHlifetable_data_THREE <- inner_join(deathEstimates_data_THREE, 
+  BHlifetable_data_TWO <- inner_join(deathEstimates_data_TWO, 
                                      GrowthRateBR_00_10,
                                    join_by(AGE_GROUP, GENDER)) %>% 
     select(AGE_GROUP, GENDER, RACE_COLOR, MEAN, GROWTH_RATE) %>% 
@@ -42,11 +42,11 @@
 
   adjFactors_ages <- seq(15, 60, by = 5)
   
-  adjFactors_data_THREE <- results_THREE %>% 
+  adjFactors_data_TWO <- results_TWO %>% 
     select(cod, ggbseg, delta)
   
-  BHlifetable_data_THREE <- BHlifetable_data_THREE %>%
-    inner_join(., adjFactors_data_THREE, join_by(cod)) %>%
+  BHlifetable_data_TWO <- BHlifetable_data_TWO %>%
+    inner_join(., adjFactors_data_TWO, join_by(cod)) %>%
     mutate(ggbseg = ifelse(ggbseg > 1, 1, ggbseg),
            delta = ifelse(ggbseg < 1, delta, 1),
            MEAN = ifelse(LOWER %in% adjFactors_ages, MEAN / ggbseg, MEAN))
@@ -88,23 +88,16 @@
 # ---
 # SCRIPT: Storing the results for RACE_COLOR White
 
-  BH_LT_Male_White <- LT(BHlifetable_data_THREE, "Male", "White")
+  BH_LT_Male_White <- LT(BHlifetable_data_TWO, "Male", "White")
   
-  BH_LT_Female_White <- LT(BHlifetable_data_THREE, "Female", "White")
+  BH_LT_Female_White <- LT(BHlifetable_data_TWO, "Female", "White")
 
 # ---
-# Storing the results for RACE_COLOR Mixed
+# Storing the results for RACE_COLOR Mixed_Black
 
-  BH_LT_Male_Mixed <- LT(BHlifetable_data_THREE, "Male", "Mixed")
+  BH_LT_Male_Mixed_Black <- LT(BHlifetable_data_TWO, "Male", "Mixed_Black")
   
-  BH_LT_Female_Mixed <- LT(BHlifetable_data_THREE, "Female", "Mixed")
-
-# ---
-# Storing the results for RACE_COLOR Black
-
-  BH_LT_Male_Black <- LT(BHlifetable_data_THREE, "Male", "Black")
-  
-  BH_LT_Female_Black <- LT(BHlifetable_data_THREE, "Female", "Black")
+  BH_LT_Female_Mixed_Black <- LT(BHlifetable_data_TWO, "Female", "Mixed_Black")
 
 # ---
 # SCRIPT: generating plot of the death probability used in the life table
@@ -115,21 +108,16 @@
               mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
               linewidth = 0.8) +
     
-    geom_line(data = BH_LT_Male_Mixed, 
-              mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
-              linewidth = 0.8) +
-    
-    geom_line(data = BH_LT_Male_Black, 
+    geom_line(data = BH_LT_Male_Mixed_Black, 
               mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
               linewidth = 0.8) +
     
     scale_color_manual(values = c("White" = "#ef476f",
-                                  "Black" = "#ffd166",
-                                  "Mixed" = "#118ab2",
+                                  "Mixed_Black" = "#118ab2",
                                   "Asian" = "#06d6a0",
                                   "Indigenous" = "#7F96FF",
                                   "Missing" = "#575761")) +
-
+    
     theme(axis.title = element_text(),
           legend.title = element_blank(),
           legend.position = "bottom") +
@@ -140,7 +128,7 @@
          title = "Probability od Death of Males by Age and Race: 2010-2019 (Bennet and Horiuchui 1981)",
          subtitle = "São Paulo, Brazil",
          caption = "\n Source: Own calculations from IBGE and DATASUS")
-
+  
 # ---
 # SCRIPT: generating plot of the death probability used in the life table
   
@@ -150,17 +138,12 @@
               mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
               linewidth = 0.8) +
     
-    geom_line(data = BH_LT_Female_Mixed, 
-              mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
-              linewidth = 0.8) +
-    
-    geom_line(data = BH_LT_Female_Black, 
+    geom_line(data = BH_LT_Female_Mixed_Black, 
               mapping = aes(x = AGE_GROUP, y = log(nqx), group = RACE_COLOR, color = RACE_COLOR),
               linewidth = 0.8) +
     
     scale_color_manual(values = c("White" = "#ef476f",
-                                  "Black" = "#ffd166",
-                                  "Mixed" = "#118ab2",
+                                  "Mixed_Black" = "#118ab2",
                                   "Asian" = "#06d6a0",
                                   "Indigenous" = "#7F96FF",
                                   "Missing" = "#575761")) +
@@ -176,7 +159,7 @@
          subtitle = "São Paulo, Brazil",
          caption = "\n Source: Own calculations from IBGE and DATASUS")
   
-  rm(adjFactors_data_THREE, adjFactors_ages, DDM_data_THREE, results_THREE,
-     deathEstimates_data_THREE, popEstimates_data_THREE_MORTALITY,
+  rm(adjFactors_data_TWO, adjFactors_ages, DDM_data_TWO, results_TWO,
+     deathEstimates_data_TWO, popEstimates_data_TWO_MORTALITY,
      GrowthRateBR_00_10, GrowthRateSP_00_10)
   

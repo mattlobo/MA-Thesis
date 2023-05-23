@@ -16,6 +16,14 @@
   source("0.2_SCRIPT - MORTALITY DATA.R")
 
 # ---
+# SCRIPT: removing unnecessary data
+  
+  rm(distRACECOLORandAGEGROUP_processdata,
+     popEstimates_data_ALL_MORTALITY, deathEstimates_data_ALL,
+     popEstimates_data_THREE_MORTALITY, popEstimates_data_THREE_PLOT, deathEstimates_data_THREE,
+     popEstimates_data_TWO_PLOT)
+  
+# ---
 # SCRIPT: building the input for the "ddm" R function with three RACE_COLOR groups
 
 # STRUCTURE: $pop1 (integer), $pop2 (integer), $deaths (numeric), 

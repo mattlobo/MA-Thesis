@@ -16,6 +16,14 @@
   source("0.2_SCRIPT - MORTALITY DATA.R")
 
 # ---
+# SCRIPT: removing unnecessary data
+  
+  rm(distRACECOLORandAGEGROUP_processdata,
+     popEstimates_data_ALL_MORTALITY, deathEstimates_data_ALL,
+     popEstimates_data_TWO_MORTALITY, popEstimates_data_TWO_PLOT, deathEstimates_data_TWO,
+     popEstimates_data_THREE_PLOT)
+  
+# ---
 # SCRIPT: building the input for the "ddm" R function with three RACE_COLOR groups
 
 # STRUCTURE: $pop1 (integer), $pop2 (integer), $deaths (numeric), 
@@ -36,6 +44,7 @@
   deaths <- deathEstimates_data_THREE %>% 
     group_by(AGE_GROUP, GENDER, RACE_COLOR) %>% 
     summarise(MEAN = mean(TOTAL))
+  
   deaths$GENDER <- case_match(deaths$GENDER,
                               "Male" ~ "m",
                               "Female" ~ "f")

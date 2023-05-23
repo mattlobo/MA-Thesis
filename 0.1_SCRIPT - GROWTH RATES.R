@@ -5,8 +5,8 @@
 # ---
 # SCRIPT: loading the necessary R Packages
 
-library(pacman)
-p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
+  library(pacman)
+  p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
 
 # ---
 # SCRIPT: downloading (or locally loading) micro data
@@ -42,7 +42,7 @@ p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
   popEstimatesIPUMS <- tibble(popEstimatesIPUMS)
 
 # ---
-# SCRIPT: creating age groups [0,1); [1,4]; [5,9] ... for calculating the growth rates
+# SCRIPT: creating age groups [0,4]; [5,9]; [10,14] ... for calculating the growth rates
 
   popEstimatesIPUMS <- popEstimatesIPUMS %>%
     arrange(., YEAR, AGE) %>%
@@ -73,7 +73,7 @@ p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
 # ---
 # SCRIPT: computing the growth rates at the NATIONAL LEVEL by age and gender
   
-  Pop_91 <- filter(popEstimatesIPUMS_BR, YEAR == 1991)
+  # Pop_91 <- filter(popEstimatesIPUMS_BR, YEAR == 1991)
   
   Pop_00 <- filter(popEstimatesIPUMS_BR, YEAR == 2000)
   
@@ -95,7 +95,7 @@ p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
     mutate(GROWTH_RATE = (log(END_POP / START_POP))/(END_YEAR - START_YEAR)) %>%
     select(GENDER, START_YEAR, END_YEAR, AGE_GROUP, START_POP, END_POP, GROWTH_RATE)
 
-  rm(Pop_91, Pop_00, Pop_10)  
+  rm(Pop_00, Pop_10)  
 
   # write_excel_csv(GrowthRateBR_91_00, "GrowthRateBR_91_00.csv", na = "NA", delim = ",")
   # 
@@ -104,7 +104,7 @@ p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
 # ---
 # SCRIPT: computing the growth rates for SAO PAULO by age and gender
   
-  Pop_91 <- filter(popEstimatesIPUMS_SP, YEAR == 1991)
+  # Pop_91 <- filter(popEstimatesIPUMS_SP, YEAR == 1991)
   
   Pop_00 <- filter(popEstimatesIPUMS_SP, YEAR == 2000)
   
@@ -126,7 +126,7 @@ p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
     mutate(GROWTH_RATE = (log(END_POP / START_POP))/(END_YEAR - START_YEAR)) %>% 
     select(GENDER, START_YEAR, END_YEAR, AGE_GROUP, START_POP, END_POP, GROWTH_RATE)
   
-  rm(Pop_91, Pop_00, Pop_10)  
+  rm(Pop_00, Pop_10)  
   
   # write_excel_csv(GrowthRateSP_91_00, "GrowthRateSP_91_00.csv", na = "NA", delim = ",")
   # 

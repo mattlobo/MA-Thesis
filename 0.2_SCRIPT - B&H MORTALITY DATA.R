@@ -52,15 +52,15 @@
                                  "Feminino" ~ "Female")
 
 # ---
-# SCRIPT: creating age groups [0,1); [1,4]; [5,9] ... for building the life table with three RACE_COLOR groups (White, Mixed, Black)
-
+  # SCRIPT: creating age groups [0,4]; [5,9]; [10,14] ... for building the life table with three RACE_COLOR groups (White, Mixed, Black)
+  
   deathEstimates_data_THREE<- deathEstimates_data %>%
-    arrange(., YEAR, AGE) %>%
-    mutate(INTERVAL = findInterval(AGE, c(0, 1, seq(5, 85, by = 5))) - 1)
-
+    arrange(., YEAR, AGE) %>% 
+    mutate(INTERVAL = findInterval(AGE, seq(0, 85, by = 5)) - 1)
+  
   find_replace <- tibble(INTERVAL = unique(na.omit(deathEstimates_data_THREE$INTERVAL)),
-                         LOWER = c(0, 1, seq(5, 85, by = 5)),
-                         UPPER = c(1, 4, seq(9, 89, by = 5))) %>%
+                         LOWER = seq(0, 85, by = 5),
+                         UPPER = seq(4, 89, by = 5)) %>%
     unite(AGE_GROUP, LOWER:UPPER, sep = "-", remove = TRUE) %>%
     mutate(AGE_GROUP = ifelse(AGE_GROUP == "85-89", "85+", AGE_GROUP),
            AGE_GROUP = as_factor(AGE_GROUP))

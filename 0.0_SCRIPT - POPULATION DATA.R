@@ -5,8 +5,8 @@
 # ---
 # SCRIPT: loading the necessary R Packages
 
-library(pacman)
-p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
+  library(pacman)
+  p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
 
 # ---
 # SCRIPT: downloading (or locally loading) micro data

@@ -14,7 +14,14 @@
   
   setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
   source("0.2_SCRIPT - MORTALITY DATA.R")
-
+  
+# ---
+# SCRIPT: removing unnecessary data
+  
+  rm(distRACECOLORandAGEGROUP_processdata,
+     popEstimates_data_THREE_MORTALITY, deathEstimates_data_THREE, popEstimates_data_THREE_PLOT,
+     popEstimates_data_TWO_MORTALITY, popEstimates_data_TWO_PLOT, deathEstimates_data_TWO)
+  
 # ---
 # SCRIPT: building the input for the "ddm" R function with three RACE_COLOR groups
 

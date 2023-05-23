@@ -45,6 +45,10 @@
   adjFactors_data_THREE <- results_THREE %>% 
     select(cod, ggbseg, delta)
   
+  adjFactors_data_THREE[1, 2:3] <- adjFactors_data_THREE[2, 2:3]
+  
+  adjFactors_data_THREE[4, 2:3] <- adjFactors_data_THREE[5, 2:3]
+  
   BHlifetable_data_THREE <- BHlifetable_data_THREE %>%
     inner_join(., adjFactors_data_THREE, join_by(cod)) %>%
     mutate(ggbseg = ifelse(ggbseg > 1, 1, ggbseg),
