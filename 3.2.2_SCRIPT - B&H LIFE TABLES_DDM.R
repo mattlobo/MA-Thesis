@@ -10,17 +10,14 @@
   p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
   
   setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
-  source("0.1_SCRIPT - GROWTH RATES.R")
+  source("3.1_SCRIPT - DDM.R")
+  
+  setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
+  source("2.1_SCRIPT - GROWTH RATES_alt.R")
   
   setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
   source("0.2_SCRIPT - B&H MORTALITY DATA.R")
     
-# ---
-# SCRIPT: removing unnecessary data
-  
-  rm(distRACECOLORandAGEGROUP_processdata,
-     deathEstimates_data_THREE, deathEstimates_data_TWO)
-
 # ---
 # SCRIPT: preparing the input to run the life table function
 
@@ -29,7 +26,7 @@
     summarise(MEAN = mean(TOTAL))
   
   BHlifetable_data_ALL <- inner_join(deathEstimates_data_ALL, 
-                                     GrowthRateBR_00_10,
+                                     GrowthRateSP_10_19,
                                    join_by(AGE_GROUP, GENDER)) %>% 
     select(AGE_GROUP, GENDER, MEAN, GROWTH_RATE) %>% 
     separate(., AGE_GROUP, c("LOWER", "UPPER"), remove = FALSE, convert = TRUE) %>%
@@ -47,7 +44,7 @@
   
   BHlifetable_data_ALL <- BHlifetable_data_ALL %>%
     inner_join(., adjFactors_data_ALL, join_by(cod)) %>%
-    mutate(ggbseg = ifelse(ggbseg > 1, 1, ggbseg),
+    mutate(ggbseg = ifelse(ggbseg > 0.9, 1, ggbseg),
            delta = ifelse(ggbseg < 1, delta, 1),
            MEAN = ifelse(LOWER %in% adjFactors_ages, MEAN / ggbseg, MEAN))
 
@@ -74,9 +71,10 @@
              ndx = ifelse(AGE_GROUP == "0-4", MEAN, MEAN[1] * `CUM_ndy/ndx`),
              lx = rev(cumsum(rev(ndx))),
              nqx = ndx / lx,
-             Lx = ifelse(AGE_GROUP == "0-4", N * lead(lx) + 0.78 * ndx,
+             Lx = ifelse(AGE_GROUP == "0-4", N * lead(lx) + (1- 0.78) * ndx,
                          ifelse(AGE_GROUP == "85+", lx * log10(lx), N * lead(lx) + (N / 2) * ndx)),
              Tx = rev(cumsum(rev(Lx))),
+             # ex = ifelse(AGE_GROUP == "85+", 7.282 * (-log(nth(nqx, length(nqx) - 1) + 0.0943))^(0.796), Tx / lx))
              ex = Tx / lx)
     
     return(LT)
@@ -117,7 +115,11 @@
          subtitle = "São Paulo, Brazil",
          caption = "\n Source: Own calculations from IBGE and DATASUS")
   
-  rm(adjFactors_data_ALL, adjFactors_ages, DDM_data_ALL, results_ALL,
-     popEstimates_data_ALL_MORTALITY, deathEstimates_data_ALL,
-     GrowthRateBR_00_10, GrowthRateSP_00_10)
+# ---
+# Clearing out the Global Environment
+  
+  # rm(list=ls()[! ls() %in% c("BH_LT_Female",
+  #                            "BH_LT_Male",
+  #                            "results_ALL",
+  #                            "GrowthRateSP_10_19")])
   

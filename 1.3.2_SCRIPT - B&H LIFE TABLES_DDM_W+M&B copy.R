@@ -17,7 +17,7 @@
   
   setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
   source("0.2_SCRIPT - B&H MORTALITY DATA.R")
- 
+  
 # ---
 # SCRIPT: preparing the input to run the life table function
 
@@ -41,6 +41,10 @@
   
   adjFactors_data_THREE <- results_THREE %>% 
     select(cod, ggbseg, delta)
+  
+  adjFactors_data_THREE[1, 2:3] <- adjFactors_data_THREE[2, 2:3]
+  
+  adjFactors_data_THREE[4, 2:3] <- adjFactors_data_THREE[5, 2:3]
   
   BHlifetable_data_THREE <- BHlifetable_data_THREE %>%
     inner_join(., adjFactors_data_THREE, join_by(cod)) %>%
@@ -75,7 +79,7 @@
              lx = rev(cumsum(rev(ndx))),
              nqx = ndx / lx,
              Lx = ifelse(AGE_GROUP == "0-4", N * lead(lx) + (1- 0.78) * ndx,
-                        ifelse(AGE_GROUP == "85+", lx * log10(lx), N * lead(lx) + (N / 2) * ndx)),
+                         ifelse(AGE_GROUP == "85+", lx * log10(lx), N * lead(lx) + (N / 2) * ndx)),
              Tx = rev(cumsum(rev(Lx))),
              # ex = ifelse(AGE_GROUP == "85+", 7.282 * (-log(nth(nqx, length(nqx) - 1) + 0.0943))^(0.796), Tx / lx))
              ex = Tx / lx)
@@ -173,7 +177,6 @@
          title = "Probability od Death of Females by Age and Race: 2010-2019 (Bennet and Horiuchui 1981)",
          subtitle = "São Paulo, Brazil",
          caption = "\n Source: Own calculations from IBGE and DATASUS")
-
 # ---
 # SCRIPT: generating plot to showcase the differences in Life Expectancy at Birth by Race
   
@@ -208,11 +211,12 @@
          title = "Life Expectancy at Birth by Gender and Race/Color",
          subtitle = "São Paulo, Brazil",
          caption = "\n Source: Own calculations from IBGE and DATASUS")
-    
+
 # ---
 # Clearing out the Global Environment
   
   # rm(list=ls()[! ls() %in% c("BH_LT_Female_White","BH_LT_Female_Mixed", "BH_LT_Female_Black",
   #                            "BH_LT_Male_White","BH_LT_Male_Mixed", "BH_LT_Male_Black",
   #                            "results_THREE", "GrowthRateSP_10_19")])
+  
   

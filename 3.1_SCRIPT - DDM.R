@@ -13,15 +13,8 @@
   source("0.0_SCRIPT - POPULATION DATA.R")
   
   setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
-  source("0.2_SCRIPT - MORTALITY DATA.R")
-  
-# ---
-# SCRIPT: removing unnecessary data
-  
-  rm(distRACECOLORandAGEGROUP_processdata,
-     popEstimates_data_THREE_MORTALITY, deathEstimates_data_THREE, popEstimates_data_THREE_PLOT,
-     popEstimates_data_TWO_MORTALITY, popEstimates_data_TWO_PLOT, deathEstimates_data_TWO)
-  
+  source("0.1_SCRIPT - MORTALITY DATA.R")
+ 
 # ---
 # SCRIPT: building the input for the "ddm" R function with three RACE_COLOR groups
 
@@ -85,12 +78,12 @@
 # ---
 # SCRIPT: diagnostics plots for females
 
-  ggbChooseAges(DDM_data_ALL[DDM_data_ALL$cod == "f", ])
-  segplot(DDM_data_ALL[DDM_data_ALL$cod == "f", ])
+  # ggbChooseAges(DDM_data_ALL[DDM_data_ALL$cod == "f", ])
+  # segplot(DDM_data_ALL[DDM_data_ALL$cod == "f", ])
 
 # ---
 # SCRIPT: diagnostics plots for males
 
-  ggbChooseAges(DDM_data_ALL[DDM_data_ALL$cod == "m", ])
-  segplot(DDM_data_ALL[DDM_data_ALL$cod == "m", ])
+  # ggbChooseAges(DDM_data_ALL[DDM_data_ALL$cod == "m", ])
+  # segplot(DDM_data_ALL[DDM_data_ALL$cod == "m", ])
   

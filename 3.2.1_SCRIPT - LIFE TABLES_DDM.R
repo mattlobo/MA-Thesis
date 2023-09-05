@@ -9,13 +9,8 @@
   library(pacman)
   p_load(readr, ipumsr, read.dbc, PNADcIBGE, tidyverse, survey, skimr, DDM)
 
-# ---
-# SCRIPT: removing unnecessary data
-
-  rm(popEstimates_data_THREE_MORTALITY, popEstimates_data_TWO_MORTALITY, 
-     popEstimates_data_THREE_PLOT, popEstimates_data_TWO_PLOT,
-     deathEstimates_data_THREE, deathEstimates_data_TWO,
-     distRACECOLORandAGEGROUP_processdata)
+  setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
+  source("3.1_SCRIPT - DDM.R")
   
 # ---
 # SCRIPT: preparing the input to run the life table function
@@ -32,8 +27,15 @@
            N = ifelse(LOWER > 0, N + 1, N),
            cod = GENDER)
   
-  temp_data_MORTALITY_ALL <- deathEstimates_data_ALL %>% 
-    group_by(AGE_GROUP, GENDER) %>% 
+  # temp_data_MORTALITY_ALL <- deathEstimates_data_THREE %>% 
+  #   mutate(TOTAL = ifelse(RACE_COLOR == "White", TOTAL * (1-0.155),
+  #                         ifelse(RACE_COLOR == "Mixed", TOTAL * (1+0.08),
+  #                                TOTAL * (1+0.258)))) %>% 
+  #   group_by(AGE_GROUP, GENDER) %>% 
+  #   summarise(DEATHS = sum(TOTAL))
+  
+  temp_data_MORTALITY_ALL <- deathEstimates_data_ALL %>%
+    group_by(AGE_GROUP, GENDER) %>%
     summarise(DEATHS = sum(TOTAL))
   
   lifetable_data_ALL <- inner_join(lifetable_data_ALL,
@@ -172,6 +174,10 @@
          subtitle = "São Paulo, Brazil",
          caption = "\n Source: Own calculations from IBGE and DATASUS")
   
-  rm(adjFactors_data_ALL, adjFactors_ages, DDM_data_ALL, results_ALL,
-     popEstimates_data_ALL_MORTALITY, deathEstimates_data_ALL)
+# ---
+# Clearing out the Global Environment
+  
+  # rm(list=ls()[! ls() %in% c("LT_Female",
+  #                            "LT_Male",
+  #                            "results_ALL")])
   

@@ -13,16 +13,8 @@
   source("0.0_SCRIPT - POPULATION DATA.R")
   
   setwd("/Users/mlobo/Documents/GitHub/MA-Thesis/0 - New Approach")
-  source("0.2_SCRIPT - MORTALITY DATA.R")
+  source("0.1_SCRIPT - MORTALITY DATA.R")
 
-# ---
-# SCRIPT: removing unnecessary data
-  
-  rm(distRACECOLORandAGEGROUP_processdata,
-     popEstimates_data_ALL_MORTALITY, deathEstimates_data_ALL,
-     popEstimates_data_THREE_MORTALITY, popEstimates_data_THREE_PLOT, deathEstimates_data_THREE,
-     popEstimates_data_TWO_PLOT)
-  
 # ---
 # SCRIPT: building the input for the "ddm" R function with three RACE_COLOR groups
 
@@ -55,6 +47,8 @@
 
   find_replace <- tibble(LOWER = c(0, 1, seq(5, 85, by = 5)),
                          UPPER = c(1, 4, seq(9, 89, by = 5))) %>%
+  # find_replace <- tibble(LOWER = seq(0, 85, by = 5),
+  #                        UPPER = seq(4, 89, by = 5)) %>% 
     unite(AGE_GROUP, LOWER:UPPER, sep = "-", remove = FALSE) %>%
     mutate(AGE_GROUP = ifelse(AGE_GROUP == "85-89", "85+", AGE_GROUP))
   
@@ -86,18 +80,18 @@
 # ---
 # SCRIPT: diagnostics plots for the RACE_COLOR = White
 
-  ggbChooseAges(DDM_data_TWO[DDM_data_TWO$cod == "f - White", ])
-  segplot(DDM_data_TWO[DDM_data_TWO$cod == "f - White", ])
-  
-  ggbChooseAges(DDM_data_TWO[DDM_data_TWO$cod == "m - White", ])
-  segplot(DDM_data_TWO[DDM_data_TWO$cod == "m - White", ])
+  # ggbChooseAges(DDM_data_TWO[DDM_data_TWO$cod == "f - White", ])
+  # segplot(DDM_data_TWO[DDM_data_TWO$cod == "f - White", ])
+  # 
+  # ggbChooseAges(DDM_data_TWO[DDM_data_TWO$cod == "m - White", ])
+  # segplot(DDM_data_TWO[DDM_data_TWO$cod == "m - White", ])
 
 # ---
 # SCRIPT: diagnostics plots for the RACE_COLOR = Mixed_Black
 
-  ggbChooseAges(DDM_data_TWO[DDM_data_TWO$cod == "f - Mixed_Black", ])
-  segplot(DDM_data_TWO[DDM_data_TWO$cod == "f - Mixed_Black", ])
-  
-  ggbChooseAges(DDM_data_TWO[DDM_data_TWO$cod == "m - Mixed_Black", ])
-  segplot(DDM_data_TWO[DDM_data_TWO$cod == "m - Mixed_Black", ])
+  # ggbChooseAges(DDM_data_TWO[DDM_data_TWO$cod == "f - Mixed_Black", ])
+  # segplot(DDM_data_TWO[DDM_data_TWO$cod == "f - Mixed_Black", ])
+  # 
+  # ggbChooseAges(DDM_data_TWO[DDM_data_TWO$cod == "m - Mixed_Black", ])
+  # segplot(DDM_data_TWO[DDM_data_TWO$cod == "m - Mixed_Black", ])
   
